@@ -11,27 +11,26 @@ INSTALL_DIR="/opt/hub-dashboard"
 
 echo -e "${GREEN}>>> Instalando Hub Dashboard...${NC}"
 
-# 1. Dependências
-apt-get update && apt-get install -y python3 curl
+# 1. Dependências (ADICIONEI O AVAHI-DAEMON AQUI)
+# O avahi-daemon permite usar http://hostname.local
+apt-get update && apt-get install -y python3 curl avahi-daemon
 
 # 2. Criar diretório
 mkdir -p $INSTALL_DIR
 cd $INSTALL_DIR
 
-# 3. Baixar arquivos principais (Sempre atualiza o código)
-echo "Baixando Core..."
+# 3. Baixar arquivos
+echo "Baixando arquivos..."
 curl -fsSL "$BASE_URL/index.html" -o index.html
 curl -fsSL "$BASE_URL/server.py" -o server.py
 
-# 4. Baixar Config (SÓ SE NÃO EXISTIR, para não apagar suas edições)
-if [ -f "config.json" ]; then
-    echo "Configuração existente detectada. Mantendo seus dados."
-else
+# 4. Config (Mantém a existente)
+if [ ! -f "config.json" ]; then
     echo "Baixando configuração padrão..."
     curl -fsSL "$BASE_URL/config.json" -o config.json
 fi
 
-# 5. Criar Serviço Systemd
+# 5. Serviço Systemd
 echo "Configurando serviço..."
 cat <<EOF > /etc/systemd/system/hub-dashboard.service
 [Unit]
@@ -42,6 +41,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=$INSTALL_DIR
+# Python na porta 80 precisa de root (o que já estamos usando)
 ExecStart=/usr/bin/python3 server.py
 Restart=always
 
@@ -53,4 +53,10 @@ EOF
 systemctl daemon-reload
 systemctl enable --now hub-dashboard
 
-echo -e "${GREEN}>>> Sucesso! Acesse em: http://$(hostname -I | awk '{print $1}'):8090${NC}"
+# 7. Mensagem Final Inteligente
+MY_HOSTNAME=$(hostname)
+MY_IP=$(hostname -I | awk '{print $1}')
+
+echo -e "${GREEN}>>> Sucesso!${NC}"
+echo -e "Acesse via IP:   http://$MY_IP"
+echo -e "Acesse via Nome: http://$MY_HOSTNAME.local"
