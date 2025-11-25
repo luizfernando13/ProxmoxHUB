@@ -42,7 +42,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/luizfernando13/ProxmoxHU
 Após a instalação, acesse pelo navegador usando o IP da máquina ou o nome do host (se sua rede suportar mDNS):
 
 - **Via IP:** `http://192.168.x.x`
-- **Via Nome:** `http://hostname.local` (ex: `http://hub.local`)
+- **Via Nome:** `http://hostname.local` (ex: `http://hub.local`) (Se não conseguir acessar reinicie: ``systemctl restart avahi-daemon``)
 
 ### ⚙️ Como Configurar
 
