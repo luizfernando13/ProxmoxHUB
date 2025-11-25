@@ -14,6 +14,7 @@
             --accent: #38bdf8;
             --system: #a78bfa;
             --danger: #ef4444;
+            --success: #22c55e;
             --input-bg: #0f172a;
             --border: #334155;
             --editor-bg: #1e1e1e;
@@ -40,6 +41,9 @@
         .btn:hover { background: var(--card-hover); border-color: var(--accent); }
         .btn-primary { background: var(--accent); color: #0f172a; border: none; font-weight: bold; }
         .btn-primary:hover { filter: brightness(1.1); background: var(--accent); }
+        
+        .btn-success { background: var(--success); color: #fff; border: none; font-weight: bold; }
+        .btn-success:hover { filter: brightness(1.1); background: var(--success); }
 
         #grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -196,8 +200,11 @@
             </div>
             <div class="modal-actions">
                 <button class="btn" onclick="closeClipboard()">Fechar</button>
+                <button id="btn-save" class="btn btn-success" onclick="manualSave()">
+                    <i class="fa-solid fa-save"></i> Salvar
+                </button>
                 <button id="btn-copy" class="btn btn-primary" onclick="safeCopy()">
-                    <i class="fa-regular fa-copy"></i> Copiar Tudo
+                    <i class="fa-regular fa-copy"></i> Copiar
                 </button>
             </div>
         </div>
@@ -283,6 +290,8 @@
             const status = document.getElementById('clipboard-status');
             status.innerText = "Digitando...";
             status.style.color = "#fbbf24";
+            
+            // Auto-Save com delay (Fallback)
             clearTimeout(typingTimer);
             typingTimer = setTimeout(() => { sendClipboard(e.target.value); }, 1000);
         });
@@ -301,12 +310,14 @@
         }
 
         async function fetchClipboard() {
+            // VOLTOU A TRAVA: Se estiver focado, NÃO atualiza.
+            if (document.activeElement === textarea) return;
+
             try {
                 const res = await fetch('/api/clipboard');
                 if (!res.ok) return;
                 const data = await res.json();
                 
-                // Atualiza SEMPRE que for diferente, independente do foco
                 if (textarea.value !== data.text) {
                     textarea.value = data.text;
                     updateLineNumbers();
@@ -326,33 +337,38 @@
             } catch (error) { status.innerText = "Erro"; status.style.color = "#ef4444"; }
         }
 
-        // --- COPIA SEGURA (FALLBACK PARA HTTP) ---
+        // --- SALVAR MANUALMENTE ---
+        function manualSave() {
+            // Salva na hora
+            sendClipboard(textarea.value);
+            // Tira o foco do textarea (Blur) -> Isso permite que o fetchClipboard volte a funcionar
+            textarea.blur();
+            
+            // Feedback visual no botão
+            const btn = document.getElementById('btn-save');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Salvo!';
+            setTimeout(() => { btn.innerHTML = originalHTML; }, 1500);
+        }
+
+        // --- COPIA SEGURA ---
         function safeCopy() {
             const btn = document.getElementById('btn-copy');
             const originalText = btn.innerHTML;
-            
-            // Seleciona o texto
             textarea.select();
-            textarea.setSelectionRange(0, 99999); // Mobile fix
-
-            // Tenta o método antigo (execCommand) que funciona em HTTP
+            textarea.setSelectionRange(0, 99999);
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
                 } else {
-                    // Se falhar, tenta o método novo (pode falhar no HTTP)
                     navigator.clipboard.writeText(textarea.value).then(() => {
                         btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
                     }).catch(() => {
                         btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Erro';
                     });
                 }
-            } catch (err) {
-                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Erro';
-            }
-
-            // Restaura o botão depois de 2 segundos
+            } catch (err) { btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Erro'; }
             setTimeout(() => { btn.innerHTML = originalText; }, 2000);
         }
 
