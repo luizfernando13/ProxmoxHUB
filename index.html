@@ -12,6 +12,7 @@
             --card-hover: rgba(51, 65, 85, 0.9);
             --text: #e2e8f0;
             --accent: #38bdf8;
+            --system: #a78bfa; /* Cor roxa para apps do sistema */
             --danger: #ef4444;
             --input-bg: #0f172a;
             --border: #334155;
@@ -26,7 +27,7 @@
             background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 5;
         }
         
-        h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
+        h1 { margin: 0; font-size: 1.5rem; color: var(--accent); display: flex; align-items: center; gap: 10px; }
 
         .btn {
             background: var(--card-bg); border: 1px solid #475569; color: var(--text);
@@ -37,6 +38,7 @@
         .btn-primary { background: var(--accent); color: #0f172a; border: none; font-weight: bold; }
         .btn-primary:hover { filter: brightness(1.1); background: var(--accent); }
 
+        /* GRID E CARDS */
         #grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px; padding: 40px; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box;
@@ -48,40 +50,42 @@
             cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.05);
             position: relative; height: 140px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
         .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
         .card i.icon-main { font-size: 3rem; margin-bottom: 15px; color: var(--accent); }
         .card h3 { margin: 0; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 8px; }
         .ext-icon { font-size: 0.7rem; opacity: 0.5; }
 
-        .card-controls {
-            position: absolute; top: 10px; right: 10px; display: none; gap: 5px;
-        }
+        /* Estilo especial para o Card do Sistema (Clipboard) */
+        .card.system-card { border-color: rgba(167, 139, 250, 0.3); background: rgba(30, 41, 59, 0.4); }
+        .card.system-card i.icon-main { color: var(--system); }
+        .card.system-card:hover { border-color: var(--system); }
+
+        .card-controls { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; }
         .editing .card-controls { display: flex; }
+        
         .card-btn {
             width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;
             display: flex; align-items: center; justify-content: center; color: white;
         }
         .btn-del { background: var(--danger); }
         .btn-edit { background: #64748b; }
-
+        
         .card.add-new { border: 2px dashed #475569; background: transparent; opacity: 0.6; }
         .card.add-new:hover { opacity: 1; border-color: var(--accent); }
 
+        /* VIEWER & MODALS */
         #viewer {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 50; animation: fadeIn 0.3s;
         }
         iframe { width: 100%; height: 100%; border: none; }
-        
         #back-float {
             position: fixed; bottom: 30px; right: 30px; z-index: 60;
             padding: 12px 25px; border-radius: 50px; font-size: 1rem;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
-        /* MODAL STYLES */
-        #modal {
+        .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center;
             backdrop-filter: blur(5px);
@@ -93,34 +97,32 @@
         }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #94a3b8; }
-        input[type="text"] {
+        input[type="text"], textarea {
             width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--border);
-            color: white; border-radius: 6px; box-sizing: border-box;
+            color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit;
         }
-        input:focus { outline: none; border-color: var(--accent); }
+        textarea { height: 200px; resize: none; font-family: monospace; }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
 
-        /* ICON PICKER STYLES */
+        /* CLIPBOARD */
+        #clipboard-status { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; text-align: right; }
+
+        /* ICON PICKER */
         .icon-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
             gap: 8px; max-height: 150px; overflow-y: auto;
-            background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid var(--border);
-            margin-top: 5px;
+            background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 5px;
         }
         .icon-option {
             height: 35px; display: flex; align-items: center; justify-content: center;
-            border-radius: 4px; cursor: pointer; color: #94a3b8; transition: 0.2s;
-            font-size: 1.2rem;
+            border-radius: 4px; cursor: pointer; color: #94a3b8; transition: 0.2s; font-size: 1.2rem;
         }
         .icon-option:hover { background: #334155; color: white; }
         .icon-option.selected { background: var(--accent); color: #0f172a; }
-
-        /* SCROLLBAR CUSTOM */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-        /* TOGGLE */
+        
         .toggle-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -128,9 +130,7 @@
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(20px); }
-
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -153,35 +153,37 @@
         <iframe id="app-frame" src=""></iframe>
     </div>
 
-    <div id="modal">
+    <div id="modal" class="modal">
         <div class="modal-content">
             <h2 style="margin-top:0">Serviço</h2>
+            <div class="form-group"> <label>Nome</label> <input type="text" id="inp-name" placeholder="Ex: Portainer"> </div>
+            <div class="form-group"> <label>URL</label> <input type="text" id="inp-url" placeholder="http://..."> </div>
             <div class="form-group">
-                <label>Nome</label>
-                <input type="text" id="inp-name" placeholder="Ex: Portainer">
-            </div>
-            <div class="form-group">
-                <label>URL</label>
-                <input type="text" id="inp-url" placeholder="http://...">
-            </div>
-            
-            <div class="form-group">
-                <label>Ícone (Selecione ou digite)</label>
-                <input type="text" id="inp-icon" placeholder="Buscar ícone..." onkeyup="filterIcons()">
+                <label>Ícone</label>
+                <input type="text" id="inp-icon" placeholder="Buscar..." onkeyup="filterIcons()">
                 <div class="icon-grid" id="icon-picker"></div>
             </div>
-            
             <div class="toggle-wrapper">
-                <label class="switch">
-                    <input type="checkbox" id="inp-newtab">
-                    <span class="slider"></span>
-                </label>
+                <label class="switch"><input type="checkbox" id="inp-newtab"><span class="slider"></span></label>
                 <span>Abrir em Nova Aba</span>
             </div>
-
             <div class="modal-actions">
                 <button class="btn" onclick="closeModal()">Cancelar</button>
                 <button class="btn btn-primary" onclick="saveService()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-clipboard" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top:0"><i class="fa-regular fa-clipboard"></i> Shared Clipboard</h2>
+            <div class="form-group">
+                <textarea id="clip-text" placeholder="Cole aqui para sincronizar..."></textarea>
+                <div id="clipboard-status">Sincronizado</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" onclick="closeClipboard()">Fechar</button>
+                <button class="btn btn-primary" onclick="copyToLocal()">Copiar</button>
             </div>
         </div>
     </div>
@@ -190,16 +192,13 @@
         let services = [];
         let isEditing = false;
         let editIndex = -1;
+        let clipInterval = null;
 
-        // Lista Curada de Ícones Úteis para HomeLab/Proxmox
         const COMMON_ICONS = [
             'fa-solid fa-server', 'fa-solid fa-network-wired', 'fa-solid fa-hard-drive', 'fa-solid fa-microchip',
             'fa-solid fa-wifi', 'fa-solid fa-cloud', 'fa-solid fa-database', 'fa-solid fa-terminal',
             'fa-solid fa-folder-open', 'fa-solid fa-file-code', 'fa-solid fa-image', 'fa-solid fa-film',
             'fa-solid fa-house-signal', 'fa-solid fa-house', 'fa-solid fa-lightbulb', 'fa-solid fa-camera',
-            'fa-solid fa-shield-halved', 'fa-solid fa-lock', 'fa-solid fa-key', 'fa-solid fa-user-shield',
-            'fa-solid fa-chart-line', 'fa-solid fa-gauge', 'fa-solid fa-bolt', 'fa-solid fa-plug',
-            'fa-solid fa-gamepad', 'fa-solid fa-robot', 'fa-solid fa-music', 'fa-solid fa-tv',
             'fa-brands fa-docker', 'fa-brands fa-linux', 'fa-brands fa-github', 'fa-brands fa-python',
             'fa-brands fa-raspberry-pi', 'fa-brands fa-windows', 'fa-brands fa-apple', 'fa-brands fa-android',
             'fa-brands fa-chrome', 'fa-brands fa-aws', 'fa-brands fa-google', 'fa-brands fa-youtube',
@@ -208,47 +207,50 @@
         ];
 
         async function loadConfig() {
-            try {
-                const res = await fetch('config.json');
-                services = await res.json();
-            } catch (e) { services = []; }
+            try { services = await (await fetch('config.json')).json(); } catch (e) { services = []; }
             render();
         }
-
         async function persistConfig() {
-            await fetch('/api/save', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(services)
-            });
+            await fetch('/api/save', { method: 'POST', body: JSON.stringify(services) });
             render();
         }
 
         function render() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('grid'); grid.innerHTML = '';
+
+            // 1. Renderiza o Card do Sistema (CLIPBOARD) fixo no início
+            const clipCard = document.createElement('div');
+            clipCard.className = 'card system-card';
+            clipCard.onclick = openClipboard; // Abre o modal ao clicar
+            clipCard.innerHTML = `
+                <i class="fa-regular fa-clipboard icon-main"></i>
+                <h3>Clipboard</h3>
+            `;
+            // Não adiciona controles de edição neste card
+            grid.appendChild(clipCard);
+
+            // 2. Renderiza os Cards do Usuário
             services.forEach((service, index) => {
-                const div = document.createElement('div');
-                div.className = 'card';
+                const div = document.createElement('div'); div.className = 'card';
                 div.onclick = (e) => {
-                    if(!isEditing && !e.target.closest('.card-btn')) {
+                    if(!isEditing && !e.target.closest('.card-btn')) 
                         service.newTab ? window.open(service.url, '_blank') : openApp(service.url);
-                    }
                 };
-                const externalIcon = service.newTab ? '<i class="fa-solid fa-arrow-up-right-from-square ext-icon"></i>' : '';
+                const extIcon = service.newTab ? '<i class="fa-solid fa-arrow-up-right-from-square ext-icon"></i>' : '';
                 div.innerHTML = `
                     <div class="card-controls">
                         <button class="card-btn btn-edit" onclick="openModal(${index})"><i class="fa-solid fa-pencil"></i></button>
                         <button class="card-btn btn-del" onclick="deleteService(${index})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <i class="${service.icon || 'fa-solid fa-link'} icon-main"></i>
-                    <h3>${service.name} ${externalIcon}</h3>
+                    <h3>${service.name} ${extIcon}</h3>
                 `;
                 grid.appendChild(div);
             });
+
+            // 3. Card de Adicionar
             if (isEditing) {
-                const addDiv = document.createElement('div');
-                addDiv.className = 'card add-new';
+                const addDiv = document.createElement('div'); addDiv.className = 'card add-new';
                 addDiv.onclick = () => openModal(-1);
                 addDiv.innerHTML = `<i class="fa-solid fa-plus icon-main"></i><h3>Adicionar</h3>`;
                 grid.appendChild(addDiv);
@@ -256,6 +258,47 @@
             } else { document.body.classList.remove('editing'); }
         }
 
+        // --- CLIPBOARD LOGIC ---
+        function openClipboard() {
+            document.getElementById('modal-clipboard').style.display = 'flex';
+            fetchClipboard(); // Busca imediatamente
+            // Inicia o polling só agora
+            if (!clipInterval) clipInterval = setInterval(fetchClipboard, 1000);
+        }
+
+        function closeClipboard() {
+            document.getElementById('modal-clipboard').style.display = 'none';
+            // Para o polling para economizar rede
+            if (clipInterval) { clearInterval(clipInterval); clipInterval = null; }
+        }
+
+        async function fetchClipboard() {
+            if (document.activeElement === document.getElementById('clip-text')) return;
+            try {
+                const res = await fetch('/api/clipboard');
+                const data = await res.json();
+                const textarea = document.getElementById('clip-text');
+                if (textarea.value !== data.text) {
+                    textarea.value = data.text;
+                    document.getElementById('clipboard-status').innerText = "Atualizado de outro PC";
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function sendClipboard(text) {
+            document.getElementById('clipboard-status').innerText = "Salvando...";
+            await fetch('/api/clipboard', { method: 'POST', body: JSON.stringify({ text: text }) });
+            document.getElementById('clipboard-status').innerText = "Sincronizado";
+        }
+
+        document.getElementById('clip-text').addEventListener('input', (e) => sendClipboard(e.target.value));
+
+        function copyToLocal() {
+            const copyText = document.getElementById("clip-text");
+            copyText.select(); navigator.clipboard.writeText(copyText.value).then(() => alert("Copiado!"));
+        }
+
+        // --- COMMON LOGIC ---
         function toggleEditMode() {
             isEditing = !isEditing;
             const btn = document.getElementById('toggle-edit');
@@ -264,39 +307,24 @@
             render();
         }
 
-        // --- ICON PICKER LOGIC ---
         function renderIcons(filter = "") {
-            const picker = document.getElementById('icon-picker');
-            picker.innerHTML = '';
+            const picker = document.getElementById('icon-picker'); picker.innerHTML = '';
             const currentVal = document.getElementById('inp-icon').value;
-            
             COMMON_ICONS.forEach(iconClass => {
                 if(iconClass.includes(filter.toLowerCase())) {
                     const div = document.createElement('div');
                     div.className = `icon-option ${currentVal === iconClass ? 'selected' : ''}`;
                     div.innerHTML = `<i class="${iconClass}"></i>`;
-                    div.onclick = () => selectIcon(iconClass);
+                    div.onclick = () => { document.getElementById('inp-icon').value = iconClass; renderIcons(); };
                     picker.appendChild(div);
                 }
             });
         }
+        function filterIcons() { renderIcons(document.getElementById('inp-icon').value); }
 
-        function selectIcon(iconClass) {
-            document.getElementById('inp-icon').value = iconClass;
-            renderIcons(); // Re-render to update selected state
-        }
-
-        function filterIcons() {
-            const query = document.getElementById('inp-icon').value;
-            renderIcons(query);
-        }
-
-        // --- MODAL LOGIC ---
         function openModal(index) {
             editIndex = index;
-            const modal = document.getElementById('modal');
-            const title = modal.querySelector('h2');
-            
+            const modal = document.getElementById('modal'); const title = modal.querySelector('h2');
             if(index > -1) {
                 title.innerText = 'Editar Serviço';
                 document.getElementById('inp-name').value = services[index].name;
@@ -305,40 +333,23 @@
                 document.getElementById('inp-newtab').checked = services[index].newTab || false;
             } else {
                 title.innerText = 'Adicionar Serviço';
-                document.getElementById('inp-name').value = '';
-                document.getElementById('inp-url').value = '';
-                document.getElementById('inp-icon').value = '';
-                document.getElementById('inp-newtab').checked = false;
+                document.getElementById('inp-name').value = ''; document.getElementById('inp-url').value = '';
+                document.getElementById('inp-icon').value = ''; document.getElementById('inp-newtab').checked = false;
             }
-            renderIcons(); // Inicia o grid
-            modal.style.display = 'flex';
+            renderIcons(); modal.style.display = 'flex';
         }
-
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
         function saveService() {
             const name = document.getElementById('inp-name').value;
             const url = document.getElementById('inp-url').value;
-            let icon = document.getElementById('inp-icon').value;
+            let icon = document.getElementById('inp-icon').value || 'fa-solid fa-globe';
             const newTab = document.getElementById('inp-newtab').checked;
-
             if(!name || !url) return alert("Preencha nome e URL!");
-            if(!icon) icon = 'fa-solid fa-globe'; // Fallback icon
-
             const newService = { name, url, icon, newTab };
             editIndex > -1 ? services[editIndex] = newService : services.push(newService);
-
-            persistConfig();
-            closeModal();
+            persistConfig(); closeModal();
         }
-
-        function deleteService(index) {
-            if(confirm('Tem certeza que deseja remover?')) {
-                services.splice(index, 1);
-                persistConfig();
-            }
-        }
-
+        function deleteService(index) { if(confirm('Remover?')) { services.splice(index, 1); persistConfig(); } }
         function openApp(url) {
             document.getElementById('app-frame').src = url;
             document.getElementById('main-view').style.display = 'none';
