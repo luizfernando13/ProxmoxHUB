@@ -3,7 +3,7 @@ import socketserver
 import json
 import os
 
-PORT = 8090
+PORT = 80
 CONFIG_FILE = 'config.json'
 
 class Handler(http.server.SimpleHTTPRequestHandler):
