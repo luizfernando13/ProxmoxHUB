@@ -3,8 +3,8 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # --- SUAS CONFIGURAÇÕES ---
-GITHUB_USER="SEU_USUARIO"
-GITHUB_REPO="SEU_REPO"
+GITHUB_USER="luizfernando13"
+GITHUB_REPO="ProxmoxHUB"
 BASE_URL="https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main"
 INSTALL_DIR="/opt/hub-dashboard"
 # --------------------------
