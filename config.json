@@ -1,0 +1,17 @@
+[
+    {
+        "name": "FileBrowser",
+        "url": "http://192.168.18.31:8080/files",
+        "icon": "fa-solid fa-folder-open"
+    },
+    {
+        "name": "Proxmox",
+        "url": "https://192.168.18.208:8006",
+        "icon": "fa-solid fa-server"
+    },
+    {
+        "name": "Roteador",
+        "url": "http://192.168.18.1",
+        "icon": "fa-solid fa-wifi"
+    }
+]
