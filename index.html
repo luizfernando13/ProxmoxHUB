@@ -13,12 +13,10 @@
             --text: #e2e8f0;
             --accent: #38bdf8;
             --danger: #ef4444;
-            --success: #22c55e;
         }
 
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
         
-        /* Layout Principal */
         #main-view { height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
         
         header {
@@ -37,7 +35,6 @@
         .btn-primary { background: var(--accent); color: #0f172a; border: none; font-weight: bold; }
         .btn-primary:hover { filter: brightness(1.1); background: var(--accent); }
 
-        /* Grid de Cards */
         #grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px; padding: 40px; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box;
@@ -51,11 +48,10 @@
         }
         
         .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
-        
         .card i.icon-main { font-size: 3rem; margin-bottom: 15px; color: var(--accent); }
-        .card h3 { margin: 0; font-size: 1.1rem; font-weight: 500; }
+        .card h3 { margin: 0; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+        .ext-icon { font-size: 0.7rem; opacity: 0.5; } /* Ícone indicando link externo */
 
-        /* Controles de Edição no Card */
         .card-controls {
             position: absolute; top: 10px; right: 10px; display: none; gap: 5px;
         }
@@ -67,11 +63,9 @@
         .btn-del { background: var(--danger); }
         .btn-edit { background: #64748b; }
 
-        /* Card de Adicionar */
         .card.add-new { border: 2px dashed #475569; background: transparent; opacity: 0.6; }
         .card.add-new:hover { opacity: 1; border-color: var(--accent); }
 
-        /* Iframe Viewer */
         #viewer {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 50; animation: fadeIn 0.3s;
@@ -84,7 +78,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
-        /* Modal */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center;
@@ -96,11 +89,29 @@
         }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #94a3b8; }
-        input {
+        input[type="text"] {
             width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155;
             color: white; border-radius: 6px; box-sizing: border-box;
         }
         input:focus { outline: none; border-color: var(--accent); }
+        
+        /* Toggle Switch CSS */
+        .toggle-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+        .switch {
+            position: relative; display: inline-block; width: 50px; height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #334155; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -116,8 +127,7 @@
             </button>
         </header>
 
-        <div id="grid">
-            </div>
+        <div id="grid"></div>
     </div>
 
     <div id="viewer">
@@ -129,20 +139,29 @@
 
     <div id="modal">
         <div class="modal-content">
-            <h2 style="margin-top:0">Adicionar Serviço</h2>
+            <h2 style="margin-top:0">Serviço</h2>
             <div class="form-group">
                 <label>Nome</label>
-                <input type="text" id="inp-name" placeholder="Ex: FileBrowser">
+                <input type="text" id="inp-name" placeholder="Ex: Proxmox">
             </div>
             <div class="form-group">
-                <label>URL (com http://)</label>
-                <input type="text" id="inp-url" placeholder="http://192.168.x.x:8080">
+                <label>URL</label>
+                <input type="text" id="inp-url" placeholder="https://...">
             </div>
             <div class="form-group">
-                <label>Ícone (Classe FontAwesome)</label>
-                <input type="text" id="inp-icon" placeholder="fa-solid fa-folder">
-                <small style="color:#64748b">Busque em fontawesome.com</small>
+                <label>Ícone (FontAwesome)</label>
+                <input type="text" id="inp-icon" placeholder="fa-solid fa-server">
             </div>
+            
+            <div class="toggle-wrapper">
+                <label class="switch">
+                    <input type="checkbox" id="inp-newtab">
+                    <span class="slider"></span>
+                </label>
+                <span>Abrir em Nova Aba?</span>
+            </div>
+            <small style="color: #64748b; display:block; margin-top:5px">Use para sites que bloqueiam iframe (Ex: Proxmox).</small>
+
             <div class="modal-actions">
                 <button class="btn" onclick="closeModal()">Cancelar</button>
                 <button class="btn btn-primary" onclick="saveService()">Salvar</button>
@@ -153,21 +172,16 @@
     <script>
         let services = [];
         let isEditing = false;
-        let editIndex = -1; // -1 significa criando novo
+        let editIndex = -1;
 
-        // Carrega config inicial
         async function loadConfig() {
             try {
                 const res = await fetch('config.json');
                 services = await res.json();
-            } catch (e) {
-                console.log("Config vazia ou erro, iniciando novo.");
-                services = [];
-            }
+            } catch (e) { services = []; }
             render();
         }
 
-        // Salva no servidor
         async function persistConfig() {
             await fetch('/api/save', {
                 method: 'POST',
@@ -184,10 +198,20 @@
             services.forEach((service, index) => {
                 const div = document.createElement('div');
                 div.className = 'card';
-                // Se estiver editando, o clique não abre o app
+                
+                // LÓGICA DO CLIQUE
                 div.onclick = (e) => {
-                    if(!isEditing && !e.target.closest('.card-btn')) openApp(service.url);
+                    if(!isEditing && !e.target.closest('.card-btn')) {
+                        if (service.newTab) {
+                            window.open(service.url, '_blank');
+                        } else {
+                            openApp(service.url);
+                        }
+                    }
                 };
+
+                // Adiciona ícone de "link externo" visualmente se for nova aba
+                const externalIcon = service.newTab ? '<i class="fa-solid fa-arrow-up-right-from-square ext-icon"></i>' : '';
 
                 div.innerHTML = `
                     <div class="card-controls">
@@ -195,12 +219,11 @@
                         <button class="card-btn btn-del" onclick="deleteService(${index})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <i class="${service.icon || 'fa-solid fa-link'} icon-main"></i>
-                    <h3>${service.name}</h3>
+                    <h3>${service.name} ${externalIcon}</h3>
                 `;
                 grid.appendChild(div);
             });
 
-            // Card de Adicionar (só aparece no modo edição)
             if (isEditing) {
                 const addDiv = document.createElement('div');
                 addDiv.className = 'card add-new';
@@ -213,7 +236,6 @@
             }
         }
 
-        // --- Lógica de Modo Edição ---
         function toggleEditMode() {
             isEditing = !isEditing;
             const btn = document.getElementById('toggle-edit');
@@ -227,7 +249,6 @@
             render();
         }
 
-        // --- Lógica do Modal ---
         function openModal(index) {
             editIndex = index;
             const modal = document.getElementById('modal');
@@ -238,11 +259,14 @@
                 document.getElementById('inp-name').value = services[index].name;
                 document.getElementById('inp-url').value = services[index].url;
                 document.getElementById('inp-icon').value = services[index].icon;
+                // Carrega o estado do switch
+                document.getElementById('inp-newtab').checked = services[index].newTab || false;
             } else {
                 title.innerText = 'Adicionar Serviço';
                 document.getElementById('inp-name').value = '';
                 document.getElementById('inp-url').value = '';
                 document.getElementById('inp-icon').value = 'fa-solid fa-globe';
+                document.getElementById('inp-newtab').checked = false;
             }
             modal.style.display = 'flex';
         }
@@ -255,10 +279,11 @@
             const name = document.getElementById('inp-name').value;
             const url = document.getElementById('inp-url').value;
             const icon = document.getElementById('inp-icon').value;
+            const newTab = document.getElementById('inp-newtab').checked; // Lê o switch
 
             if(!name || !url) return alert("Preencha nome e URL!");
 
-            const newService = { name, url, icon };
+            const newService = { name, url, icon, newTab };
 
             if(editIndex > -1) {
                 services[editIndex] = newService;
@@ -277,7 +302,6 @@
             }
         }
 
-        // --- Lógica do Iframe ---
         function openApp(url) {
             document.getElementById('app-frame').src = url;
             document.getElementById('main-view').style.display = 'none';
@@ -290,7 +314,6 @@
             document.getElementById('main-view').style.display = 'flex';
         }
 
-        // Inicia
         loadConfig();
     </script>
 </body>
