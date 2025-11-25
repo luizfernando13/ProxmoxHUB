@@ -12,10 +12,13 @@
             --card-hover: rgba(51, 65, 85, 0.9);
             --text: #e2e8f0;
             --accent: #38bdf8;
-            --system: #a78bfa; /* Cor roxa para apps do sistema */
+            --system: #a78bfa;
             --danger: #ef4444;
             --input-bg: #0f172a;
             --border: #334155;
+            --editor-bg: #1e1e1e; /* Cor estilo VS Code */
+            --line-num-bg: #252526;
+            --line-num-text: #858585;
         }
 
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
@@ -38,7 +41,7 @@
         .btn-primary { background: var(--accent); color: #0f172a; border: none; font-weight: bold; }
         .btn-primary:hover { filter: brightness(1.1); background: var(--accent); }
 
-        /* GRID E CARDS */
+        /* GRID */
         #grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px; padding: 40px; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box;
@@ -55,25 +58,20 @@
         .card h3 { margin: 0; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 8px; }
         .ext-icon { font-size: 0.7rem; opacity: 0.5; }
 
-        /* Estilo especial para o Card do Sistema (Clipboard) */
+        /* System Card */
         .card.system-card { border-color: rgba(167, 139, 250, 0.3); background: rgba(30, 41, 59, 0.4); }
         .card.system-card i.icon-main { color: var(--system); }
         .card.system-card:hover { border-color: var(--system); }
 
         .card-controls { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; }
         .editing .card-controls { display: flex; }
-        
-        .card-btn {
-            width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; color: white;
-        }
+        .card-btn { width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; }
         .btn-del { background: var(--danger); }
         .btn-edit { background: #64748b; }
-        
         .card.add-new { border: 2px dashed #475569; background: transparent; opacity: 0.6; }
         .card.add-new:hover { opacity: 1; border-color: var(--accent); }
 
-        /* VIEWER & MODALS */
+        /* VIEWER */
         #viewer {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 50; animation: fadeIn 0.3s;
@@ -85,44 +83,67 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
+        /* MODALS */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;
             backdrop-filter: blur(5px);
         }
+        
+        /* Modal Padrão (Pequeno) */
         .modal-content {
             background: #1e293b; padding: 25px; border-radius: 12px; width: 450px;
             border: 1px solid #475569; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            max-height: 90vh; display: flex; flex-direction: column;
+            display: flex; flex-direction: column;
         }
+
+        /* Modal Gigante para o Clipboard (80% da tela) */
+        .modal-large {
+            width: 80%; height: 80vh; max-width: none;
+        }
+
+        /* EDITOR DE CÓDIGO ESTILIZADO */
+        .editor-wrapper {
+            flex: 1; display: flex; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--editor-bg); overflow: hidden; margin-top: 10px; position: relative;
+        }
+        
+        /* Linhas (Incopiáveis) */
+        .line-numbers {
+            width: 50px; background: var(--line-num-bg); color: var(--line-num-text);
+            text-align: right; padding: 10px 5px; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px; line-height: 1.5; user-select: none; /* O SEGREDO MÁGICO */
+            overflow: hidden; border-right: 1px solid #333;
+        }
+
+        /* Área de Texto */
+        textarea.code-area {
+            flex: 1; background: transparent; color: #d4d4d4; border: none;
+            padding: 10px; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px; line-height: 1.5; resize: none; white-space: pre; overflow: auto;
+        }
+        textarea.code-area:focus { outline: none; }
+
+        /* Scrollbars customizadas */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: #1e1e1e; }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4f4f4f; }
+
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #94a3b8; }
-        input[type="text"], textarea {
+        input[type="text"] {
             width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--border);
             color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit;
         }
-        textarea { height: 200px; resize: none; font-family: monospace; }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+        input:focus { outline: none; border-color: var(--accent); }
 
-        /* CLIPBOARD */
-        #clipboard-status { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; text-align: right; }
-
-        /* ICON PICKER */
-        .icon-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-            gap: 8px; max-height: 150px; overflow-y: auto;
-            background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 5px;
-        }
-        .icon-option {
-            height: 35px; display: flex; align-items: center; justify-content: center;
-            border-radius: 4px; cursor: pointer; color: #94a3b8; transition: 0.2s; font-size: 1.2rem;
-        }
-        .icon-option:hover { background: #334155; color: white; }
-        .icon-option.selected { background: var(--accent); color: #0f172a; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        #clipboard-status { font-size: 0.8rem; color: #94a3b8; margin-left: auto; }
         
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+        /* Toggle e Icons */
         .toggle-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -130,7 +151,12 @@
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(20px); }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        
+        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; max-height: 150px; overflow-y: auto; background: #0f172a; padding: 10px; border-radius: 6px; margin-top: 5px; }
+        .icon-option { height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; color: #94a3b8; font-size: 1.2rem; }
+        .icon-option:hover { background: #334155; color: white; }
+        .icon-option.selected { background: var(--accent); color: #0f172a; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -175,15 +201,22 @@
     </div>
 
     <div id="modal-clipboard" class="modal">
-        <div class="modal-content">
-            <h2 style="margin-top:0"><i class="fa-regular fa-clipboard"></i> Shared Clipboard</h2>
-            <div class="form-group">
-                <textarea id="clip-text" placeholder="Cole aqui para sincronizar..."></textarea>
-                <div id="clipboard-status">Sincronizado</div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 style="margin:0"><i class="fa-regular fa-clipboard"></i> Shared Clipboard</h2>
+                <span id="clipboard-status">Aguardando...</span>
             </div>
+            
+            <div class="editor-wrapper">
+                <div id="line-numbers" class="line-numbers">1</div>
+                <textarea id="clip-text" class="code-area" placeholder="Cole seu código ou texto aqui..." spellcheck="false"></textarea>
+            </div>
+
             <div class="modal-actions">
                 <button class="btn" onclick="closeClipboard()">Fechar</button>
-                <button class="btn btn-primary" onclick="copyToLocal()">Copiar</button>
+                <button class="btn btn-primary" onclick="copyToLocal()">
+                    <i class="fa-regular fa-copy"></i> Copiar Tudo
+                </button>
             </div>
         </div>
     </div>
@@ -193,6 +226,7 @@
         let isEditing = false;
         let editIndex = -1;
         let clipInterval = null;
+        let typingTimer = null;
 
         const COMMON_ICONS = [
             'fa-solid fa-server', 'fa-solid fa-network-wired', 'fa-solid fa-hard-drive', 'fa-solid fa-microchip',
@@ -217,19 +251,15 @@
 
         function render() {
             const grid = document.getElementById('grid'); grid.innerHTML = '';
-
-            // 1. Renderiza o Card do Sistema (CLIPBOARD) fixo no início
+            
+            // CARD CLIPBOARD
             const clipCard = document.createElement('div');
             clipCard.className = 'card system-card';
-            clipCard.onclick = openClipboard; // Abre o modal ao clicar
-            clipCard.innerHTML = `
-                <i class="fa-regular fa-clipboard icon-main"></i>
-                <h3>Clipboard</h3>
-            `;
-            // Não adiciona controles de edição neste card
+            clipCard.onclick = openClipboard;
+            clipCard.innerHTML = `<i class="fa-regular fa-clipboard icon-main"></i><h3>Clipboard</h3>`;
             grid.appendChild(clipCard);
 
-            // 2. Renderiza os Cards do Usuário
+            // CARDS USUARIO
             services.forEach((service, index) => {
                 const div = document.createElement('div'); div.className = 'card';
                 div.onclick = (e) => {
@@ -248,7 +278,6 @@
                 grid.appendChild(div);
             });
 
-            // 3. Card de Adicionar
             if (isEditing) {
                 const addDiv = document.createElement('div'); addDiv.className = 'card add-new';
                 addDiv.onclick = () => openModal(-1);
@@ -258,47 +287,81 @@
             } else { document.body.classList.remove('editing'); }
         }
 
-        // --- CLIPBOARD LOGIC ---
+        // --- LÓGICA DO EDITOR (LINHAS) ---
+        const textarea = document.getElementById('clip-text');
+        const lineNumbers = document.getElementById('line-numbers');
+
+        const updateLineNumbers = () => {
+            const numberOfLines = textarea.value.split('\n').length;
+            lineNumbers.innerHTML = Array(numberOfLines).fill('<span></span>').map((_, i) => i + 1).join('<br>');
+        };
+
+        // Sync Scroll: Se rolar o texto, rola os números
+        textarea.addEventListener('scroll', () => {
+            lineNumbers.scrollTop = textarea.scrollTop;
+        });
+
+        // Sync Content: Se digitar, atualiza números e lógica de envio
+        textarea.addEventListener('input', (e) => {
+            updateLineNumbers();
+            
+            // Lógica Debounce de Envio
+            const status = document.getElementById('clipboard-status');
+            status.innerText = "Digitando...";
+            status.style.color = "#fbbf24";
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => { sendClipboard(e.target.value); }, 1000);
+        });
+
+        // --- LÓGICA DO CLIPBOARD ---
         function openClipboard() {
             document.getElementById('modal-clipboard').style.display = 'flex';
-            fetchClipboard(); // Busca imediatamente
-            // Inicia o polling só agora
-            if (!clipInterval) clipInterval = setInterval(fetchClipboard, 1000);
+            fetchClipboard();
+            if (clipInterval) clearInterval(clipInterval);
+            clipInterval = setInterval(fetchClipboard, 1500);
         }
 
         function closeClipboard() {
             document.getElementById('modal-clipboard').style.display = 'none';
-            // Para o polling para economizar rede
             if (clipInterval) { clearInterval(clipInterval); clipInterval = null; }
         }
 
         async function fetchClipboard() {
-            if (document.activeElement === document.getElementById('clip-text')) return;
+            if (document.activeElement === textarea) return;
             try {
                 const res = await fetch('/api/clipboard');
+                if (!res.ok) return;
                 const data = await res.json();
-                const textarea = document.getElementById('clip-text');
+                
                 if (textarea.value !== data.text) {
                     textarea.value = data.text;
-                    document.getElementById('clipboard-status').innerText = "Atualizado de outro PC";
+                    updateLineNumbers(); // Atualiza as linhas ao receber texto externo
+                    document.getElementById('clipboard-status').innerText = "Sincronizado";
+                    document.getElementById('clipboard-status').style.color = "#4ade80";
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {}
         }
 
         async function sendClipboard(text) {
-            document.getElementById('clipboard-status').innerText = "Salvando...";
-            await fetch('/api/clipboard', { method: 'POST', body: JSON.stringify({ text: text }) });
-            document.getElementById('clipboard-status').innerText = "Sincronizado";
+            const status = document.getElementById('clipboard-status');
+            status.innerText = "Salvando...";
+            try {
+                await fetch('/api/clipboard', { method: 'POST', body: JSON.stringify({ text: text }) });
+                status.innerText = "Sincronizado";
+                status.style.color = "#4ade80";
+            } catch (error) { status.innerText = "Erro"; status.style.color = "#ef4444"; }
         }
-
-        document.getElementById('clip-text').addEventListener('input', (e) => sendClipboard(e.target.value));
 
         function copyToLocal() {
-            const copyText = document.getElementById("clip-text");
-            copyText.select(); navigator.clipboard.writeText(copyText.value).then(() => alert("Copiado!"));
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const status = document.getElementById('clipboard-status');
+                status.innerText = "Copiado para área de transferência!";
+                setTimeout(() => { status.innerText = "Sincronizado"; }, 2000);
+            });
         }
 
-        // --- COMMON LOGIC ---
+        // --- RESTO DO CÓDIGO ---
         function toggleEditMode() {
             isEditing = !isEditing;
             const btn = document.getElementById('toggle-edit');
